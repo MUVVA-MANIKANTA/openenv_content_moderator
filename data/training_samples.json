@@ -1,0 +1,402 @@
+[
+  {
+    "post_id": 1001,
+    "user_id": 101,
+    "text": "Join our sweepstakes for a free vacation! Click here for a chance to win.",
+    "reputation": 0.05,
+    "correct_label": "flag_spam",
+    "reason": "Suspicious commercial promotion with external link and low reputation."
+  },
+  {
+    "post_id": 1002,
+    "user_id": 202,
+    "text": "The local fire department is responding to a small brush fire on Main St. Stay clear.",
+    "reputation": 0.95,
+    "correct_label": "approve",
+    "reason": "Safe, verified informational post from a high-reputation source."
+  },
+  {
+    "post_id": 1003,
+    "user_id": 999,
+    "text": "I heard the voting machines are being tampered with! Don't trust the results!",
+    "reputation": 0.1,
+    "correct_label": "flag_misinfo",
+    "reason": "Unverified and dangerous misinformation about election integrity from a serial offender."
+  },
+  {
+    "post_id": 1004,
+    "user_id": 303,
+    "text": "You are absolutely pathetic for having that opinion on the movie.",
+    "reputation": 0.4,
+    "correct_label": "flag_hate",
+    "reason": "Personal attack and harassment directed towards another user."
+  },
+  {
+    "post_id": 1005,
+    "user_id": 101,
+    "text": "Check out my new art piece! Hope you all like it :)",
+    "reputation": 0.6,
+    "correct_label": "approve",
+    "reason": "Safe creative expression."
+  },
+  {
+    "post_id": 1006,
+    "user_id": 999,
+    "text": "I'm going to find where you live and make you pay for that post.",
+    "reputation": 0.01,
+    "correct_label": "flag_hate",
+    "reason": "Direct physical threat of violence from a high-risk user."
+  },
+  {
+    "post_id": 1007,
+    "user_id": 404,
+    "text": "Exclusive adult content available now! 18+ only. Visit our profile for the link.",
+    "reputation": 0.15,
+    "correct_label": "flag_adult",
+    "reason": "NSFW/Adult content promotion."
+  },
+  {
+    "post_id": 1008,
+    "user_id": 505,
+    "text": "Earn $1000 a week working from home! No experience required. DM for details!",
+    "reputation": 0.08,
+    "correct_label": "flag_spam",
+    "reason": "Get-rich-quick scheme/spam."
+  },
+  {
+    "post_id": 1009,
+    "user_id": 606,
+    "text": "New study shows that drinking blue Gatorade causes immediate baldness. Spread the word!",
+    "reputation": 0.2,
+    "correct_label": "flag_misinfo",
+    "reason": "Absurd and unverified health misinformation."
+  },
+  {
+    "post_id": 1010,
+    "user_id": 707,
+    "text": "Does anyone have recommendations for a good local bakery that makes sourdough?",
+    "reputation": 0.85,
+    "correct_label": "approve",
+    "reason": "Helpful community inquiry from a high-reputation user."
+  },
+  {
+    "post_id": 1011,
+    "user_id": 102,
+    "text": "Hey check out this new keto supplement! I lost 10lbs in 3 days. Link in bio!",
+    "reputation": 0.09,
+    "correct_label": "flag_spam",
+    "reason": "Unrealistic health claims and suspicious promotional link."
+  },
+  {
+    "post_id": 1012,
+    "user_id": 103,
+    "text": "The sunset tonight was absolutely breathtaking. I love this city in the fall.",
+    "reputation": 0.90,
+    "correct_label": "approve",
+    "reason": "Safe, positive community observation."
+  },
+  {
+    "post_id": 1013,
+    "user_id": 104,
+    "text": "Climate change is just a hoax invented by the solar panel industry.",
+    "reputation": 0.15,
+    "correct_label": "flag_misinfo",
+    "reason": "Controversial and unverified climate misinformation."
+  },
+  {
+    "post_id": 1014,
+    "user_id": 105,
+    "text": "You are a complete idiot and should be banned from this platform forever.",
+    "reputation": 0.30,
+    "correct_label": "flag_hate",
+    "reason": "Personal harassment and targeted bullying."
+  },
+  {
+    "post_id": 1015,
+    "user_id": 106,
+    "text": "I’m having a local yard sale this Saturday from 9 AM to 1 PM. All are welcome!",
+    "reputation": 0.75,
+    "correct_label": "approve",
+    "reason": "Safe community announcement."
+  },
+  {
+    "post_id": 1016,
+    "user_id": 107,
+    "text": "Hot singles in your area are waiting for you! Sign up now for a free trial.",
+    "reputation": 0.04,
+    "correct_label": "flag_adult",
+    "reason": "Suspicious adult-themed spam link."
+  },
+  {
+    "post_id": 1017,
+    "user_id": 108,
+    "text": "The government is using 5G towers to control our thoughts. Stay safe everyone.",
+    "reputation": 0.12,
+    "correct_label": "flag_misinfo",
+    "reason": "Well-known conspiracy theory/misinformation."
+  },
+  {
+    "post_id": 1018,
+    "user_id": 109,
+    "text": "Does anyone know if the local library is open on holidays?",
+    "reputation": 0.82,
+    "correct_label": "approve",
+    "reason": "Safe, helpful community question."
+  },
+  {
+    "post_id": 1019,
+    "user_id": 110,
+    "text": "People from [Region X] are inherently inferior and don't deserve rights.",
+    "reputation": 0.02,
+    "correct_label": "flag_hate",
+    "reason": "Explicit hate speech and dehumanization of a group."
+  },
+  {
+    "post_id": 1020,
+    "user_id": 111,
+    "text": "I will pay $500 for anyone who can provide a fake vaccination card.",
+    "reputation": 0.10,
+    "correct_label": "flag_misinfo",
+    "reason": "Promotion of illegal activity and public health fraud."
+  },
+  {
+    "post_id": 1021,
+    "user_id": 112,
+    "text": "Just finished reading a fantastic book on the history of jazz. Highly recommend it!",
+    "reputation": 0.88,
+    "correct_label": "approve",
+    "reason": "Safe educational recommendation."
+  },
+  {
+    "post_id": 1022,
+    "user_id": 113,
+    "text": "FREE BITCOIN GIVEAWAY! Just send 0.1 BTC to this wallet and get 1 BTC back instantly!",
+    "reputation": 0.01,
+    "correct_label": "flag_spam",
+    "reason": "Obvious crypto scam / phishing."
+  },
+  {
+    "post_id": 1023,
+    "user_id": 114,
+    "text": "I hope you suffer and lose everything you love for what you said about me.",
+    "reputation": 0.25,
+    "correct_label": "flag_hate",
+    "reason": "Severe personal harassment and malicious intent."
+  },
+  {
+    "post_id": 1024,
+    "user_id": 115,
+    "text": "Drinking bleach is a proven cure for all viral infections. Don't let the doctors lie to you.",
+    "reputation": 0.05,
+    "correct_label": "flag_misinfo",
+    "reason": "Extremely dangerous medical misinformation."
+  },
+  {
+    "post_id": 1025,
+    "user_id": 116,
+    "text": "Congratulations to the winners of the local high school science fair! Truly inspiring work.",
+    "reputation": 0.98,
+    "correct_label": "approve",
+    "reason": "Safe and positive community praise."
+  },
+  {
+    "post_id": 1026,
+    "user_id": 117,
+    "text": "Looking for models for an 'artistic' photoshoot. No experience required. Paid in cash.",
+    "reputation": 0.18,
+    "correct_label": "flag_adult",
+    "reason": "Coded solicitation for adult-oriented work."
+  },
+  {
+    "post_id": 1027,
+    "user_id": 118,
+    "text": "Tired of your 9-5? Click here to learn how I made $5000 a day from my phone!",
+    "reputation": 0.06,
+    "correct_label": "flag_spam",
+    "reason": "Unrealistic financial claims/spam."
+  },
+  {
+    "post_id": 1028,
+    "user_id": 119,
+    "text": "We need to rise up and use violence against those who disagree with our party.",
+    "reputation": 0.03,
+    "correct_label": "flag_hate",
+    "reason": "Incitement of political violence and civil unrest."
+  },
+  {
+    "post_id": 1029,
+    "user_id": 120,
+    "text": "Is it true that the moon is actually just a giant spotlight placed by NASA?",
+    "reputation": 0.40,
+    "correct_label": "flag_misinfo",
+    "reason": "Absurd conspiracy theory/misinformation."
+  },
+  {
+    "post_id": 1030,
+    "user_id": 121,
+    "text": "Who is excited for the new season of the show premiering tonight? I can't wait!",
+    "reputation": 0.80,
+    "correct_label": "approve",
+    "reason": "Safe entertainment discussion."
+  },
+  {
+    "post_id": 1031,
+    "user_id": 122,
+    "text": "You are a disgusting sub-human and you don't belong in our community.",
+    "reputation": 0.15,
+    "correct_label": "flag_hate",
+    "reason": "Dehumanizing hate speech."
+  },
+  {
+    "post_id": 1032,
+    "user_id": 123,
+    "text": "URGENT: Your bank account has been compromised. Verify your details here immediately: bit.ly/fakelink",
+    "reputation": 0.02,
+    "correct_label": "flag_spam",
+    "reason": "Malicious phishing attempt."
+  },
+  {
+    "post_id": 1033,
+    "user_id": 124,
+    "text": "The upcoming rainstorm might cause local flooding. Please secure your outdoor items.",
+    "reputation": 0.92,
+    "correct_label": "approve",
+    "reason": "Helpful safety advisory from a trusted source."
+  },
+  {
+    "post_id": 1034,
+    "user_id": 125,
+    "text": "I’m selling my slightly used guitar for $200. DM me for photos if interested!",
+    "reputation": 0.70,
+    "correct_label": "approve",
+    "reason": "Safe peer-to-peer commerce."
+  },
+  {
+    "post_id": 1035,
+    "user_id": 126,
+    "text": "Don't believe the news, the earth is actually flat and they are hiding the ice wall.",
+    "reputation": 0.10,
+    "correct_label": "flag_misinfo",
+    "reason": "Flat-earth misinformation."
+  },
+  {
+    "post_id": 1036,
+    "user_id": 127,
+    "text": "Join our 18+ Discord server for exclusive content and live shows!",
+    "reputation": 0.12,
+    "correct_label": "flag_adult",
+    "reason": "NSFW platform promotion."
+  },
+  {
+    "post_id": 1037,
+    "user_id": 128,
+    "text": "Your opinion is literally the most stupid thing I have ever heard in my life.",
+    "reputation": 0.45,
+    "correct_label": "approve",
+    "reason": "Rude but not a policy-violating attack; protected under opinion expression."
+  },
+  {
+    "post_id": 1038,
+    "user_id": 129,
+    "text": "We should deport every person from [Ethnic Group] immediately for our safety.",
+    "reputation": 0.05,
+    "correct_label": "flag_hate",
+    "reason": "Xenophobic hate speech."
+  },
+  {
+    "post_id": 1039,
+    "user_id": 130,
+    "text": "I found a lost dog near the park yesterday. Please share to find the owner!",
+    "reputation": 0.85,
+    "correct_label": "approve",
+    "reason": "Helpful community post."
+  },
+  {
+    "post_id": 1040,
+    "user_id": 131,
+    "text": "SECRET TO ETERNAL LIFE: Eat only pinecones and never sleep. NASA hates this trick!",
+    "reputation": 0.08,
+    "correct_label": "flag_misinfo",
+    "reason": "Dangerous and absurd health misinformation."
+  },
+  {
+    "post_id": 1041,
+    "user_id": 132,
+    "text": "Why are people from [Religious Group] still allowed to live in this country?",
+    "reputation": 0.10,
+    "correct_label": "flag_hate",
+    "reason": "Religious hate speech."
+  },
+  {
+    "post_id": 1042,
+    "user_id": 133,
+    "text": "Congratulations to my daughter for graduating today! So proud of her achievements.",
+    "reputation": 0.95,
+    "correct_label": "approve",
+    "reason": "Safe personal milestone."
+  },
+  {
+    "post_id": 1043,
+    "user_id": 134,
+    "text": "Win a new iPhone 16 Pro! Just enter your email and phone number at this link.",
+    "reputation": 0.04,
+    "correct_label": "flag_spam",
+    "reason": "Data-harvesting spam scam."
+  },
+  {
+    "post_id": 1044,
+    "user_id": 135,
+    "text": "I'm selling custom-made furniture. Check my portfolio in the comments!",
+    "reputation": 0.65,
+    "correct_label": "approve",
+    "reason": "Legitimate business promotion."
+  },
+  {
+    "post_id": 1045,
+    "user_id": 136,
+    "text": "Doctors are lying, cancer can be cured by just thinking positive thoughts.",
+    "reputation": 0.07,
+    "correct_label": "flag_misinfo",
+    "reason": "Extremely harmful medical misinformation."
+  },
+  {
+    "post_id": 1046,
+    "user_id": 137,
+    "text": "I have compromising photos of you and I will release them if you don't pay me.",
+    "reputation": 0.01,
+    "correct_label": "flag_hate",
+    "reason": "Direct blackmail and harassment."
+  },
+  {
+    "post_id": 1047,
+    "user_id": 138,
+    "text": "Anyone want to play pickleball this weekend? We need one more player!",
+    "reputation": 0.88,
+    "correct_label": "approve",
+    "reason": "Safe community coordination."
+  },
+  {
+    "post_id": 1048,
+    "user_id": 139,
+    "text": "See me live tonight for a private webcam session! Special rates for new members.",
+    "reputation": 0.06,
+    "correct_label": "flag_adult",
+    "reason": "Webcam girl / adult entertainment spam."
+  },
+  {
+    "post_id": 1049,
+    "user_id": 140,
+    "text": "The results of the local election were 100% fake and I will not accept them.",
+    "reputation": 0.20,
+    "correct_label": "flag_misinfo",
+    "reason": "Election integrity misinformation."
+  },
+  {
+    "post_id": 1050,
+    "user_id": 141,
+    "text": "Just ate the best sourdough bread of my life at that new bakery near the park.",
+    "reputation": 0.85,
+    "correct_label": "approve",
+    "reason": "Safe food review."
+  }
+]
