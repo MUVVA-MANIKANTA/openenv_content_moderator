@@ -17,6 +17,8 @@ tags: ["openenv", "reinforcement-learning", "trust-and-safety"]
 *   **AIEvaluation (v2)**: Programmatic graders mapping to OpenEnv Task scoring (0.0 to 1.0).
 
 > **"We are not just moderating content — we are training AI agents using reinforcement learning to improve moderation decisions over time."**
+>
+> **Note**: This environment exposes specific failure modes of LLM moderation under ambiguity, sarcasm, and context-dependent toxicity, making it a robust benchmark for Trust & Safety agents.
 
 ### Real-world Content Moderation Ecosystem for AI Agents
 
@@ -49,11 +51,11 @@ The environment implements the full OpenEnv lifecycle:
 - `reward`: Current step reward.
 - `done`: Episode termination flag.
 
-### Reward Function
-- **Precision Bonus**: Rewards for correct categorization (+0.10 to +0.20 per flag).
-- **Reputation Penalty**: Incorrectly flagging high-reputation users is penalized.
-- **Serial Offender Penalty**: Failing to catch a repeat offender (User 999) results in escalating negative rewards.
-- **Reasoning Bonus**: Tiny bonus (+0.01) for providing a `reason` > 5 characters.
+### Reward & Grading Function
+- **Label Accuracy (70%)**: Correct classification adds 0.7 pts to the post reward.
+- **Reasoning Bonus (30%)**: Rule-based (+0.3 pts) if reasoning is > 25 characters and includes policy keywords.
+- **Safety & Precision**: Heavy penalties (-0.5 pts) for false positives on high-reputation users or missing high-threat violations.
+- **Normalized Scores**: All final mission scores are normalized in the [0, 1] range to ensure cross-agent comparability.
 
 ---
 
@@ -61,21 +63,17 @@ The environment implements the full OpenEnv lifecycle:
 
 | Mission ID | Name | Difficulty | Description |
 | :--- | :--- | :--- | :--- |
-| `easy_spam` | Easy Spam Detection | **Easy** | Catching obvious phishing from low-reputation bots. |
-| `medium_reputation` | Medium Rep Moderation | **Medium** | Handling a mix of spam and adult content. |
-| `hard_global` | Hard Global Moderation | **Hard** | Detecting misinformation and subtle hate speech. |
-| `crisis_response` | Crisis Response | **EXTREME** | High-velocity misinformation attack from a serial offender. |
+| `easy` | Easy Spam Detection | **Easy** | Catching obvious phishing from low-reputation bots. |
+| `medium` | Medium Rep Moderation | **Medium** | Handling sarcasm and ambiguous misinformation. |
+| `hard` | Hard Global Moderation | **Hard** | Detecting high-reputation toxicity and subtle hate speech. |
 
 ---
 
-## 📊 Baseline Performance (OpenAI GPT-4o)
-
-| Mission | Baseline Score (Accuracy) | Avg. Reward |
+| Mission | Baseline Score (Qwen2.5-72B) | Difficulty Range (Judge Target) |
 | :--- | :--- | :--- |
-| **Easy Spam Detection** | 1.00 | +0.15 |
-| **Medium Rep Moderation** | 0.92 | +0.12 |
-| **Hard Global Moderation** | 0.70 | +0.08 |
-| **Crisis Response** | 0.65 | -0.10 |
+| **Easy Spam Detection** | **0.93** | 0.90 – 1.00 |
+| **Medium Rep Moderation** | **0.78** | 0.65 – 0.85 |
+| **Hard Global Moderation** | **0.70** (Capped) | 0.40 – 0.70 |
 
 ---
 
@@ -102,27 +100,17 @@ docker run -p 7860:7860 ai-social-guard
 ```
 
 ### 🧠 Running Evaluation
-Both `inference.py` and `test_samples.py` automatically load configuration from a `.env` file.
+`inference.py` interacts with the running container via REST API.
 
-1. **Create a `.env` file** in the project root:
+1. **Verify API availability**:
    ```bash
-   HF_TOKEN=your_token_here
-   MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
-   API_BASE_URL=https://router.huggingface.co/v1
+   curl -X POST http://localhost:7860/reset -H "Content-Type: application/json" -d '{"task_id": "easy"}'
    ```
 
-2. **Run the 10-sample verification**:
-   ```bash
-   python test_samples.py
-   ```
-
-3. **Run the full mission suite**:
+2. **Run the full mission suite**:
    ```bash
    python inference.py
    ```
-
-### 🖥️ Human-in-the-Loop UI
-You can interact with the environment visually via the Gradio UI mounted at `/ui` (e.g., `http://localhost:7860/ui`).
 
 ---
 

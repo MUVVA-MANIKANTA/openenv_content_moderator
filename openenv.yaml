@@ -1,18 +1,14 @@
 name: ai_social_guard
 description: High-fidelity reinforcement learning environment for content moderation and safety policy.
 tasks:
-  - easy
-  - medium
-  - hard
-  - easy_spam
-  - medium_reputation
-  - hard_global
-  - crisis_response
-entrypoint: src/server.py
+  - id: easy
+  - id: medium
+  - id: hard
+entrypoint: app:app
 action_space:
   type: SocialGuardAction
 observation_space:
   type: SocialGuardObservation
 state_space:
   type: SocialGuardState
-version: 2.0.0
+version: 2.1.0

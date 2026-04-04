@@ -15,8 +15,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
-# Expose port (default for HF Spaces)
+# Expose port (HF Spaces defaults to 7860)
 EXPOSE 7860
 
 # Run the app using uvicorn
-CMD ["uvicorn", "src.server:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
