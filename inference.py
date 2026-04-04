@@ -30,11 +30,10 @@ MAX_STEPS = 20
 TEMPERATURE = 0.0
 
 # Initialize OpenAI Client for LLM
-if HF_TOKEN:
-    client = OpenAI(
-        base_url=LLM_API_BASE_URL,
-        api_key=HF_TOKEN
-    )
+client = OpenAI(
+    base_url=LLM_API_BASE_URL,
+    api_key=HF_TOKEN or "no-token"
+)
 
 TASKS = {
     "easy_spam": EasySpamTask,

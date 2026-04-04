@@ -18,8 +18,9 @@ def run_minimal_test():
     
     for task in tasks:
         print(f"\n--- MISSION: {task.__class__.__name__} ---")
+        rng = random.Random(42)
         env = AISocialGuardEnv(task_config=task.get_config())
-        obs = env.reset()
+        obs = env.reset(seed=42)
         done = False
         
         while not done:
@@ -32,10 +33,10 @@ def run_minimal_test():
             correct_label = gt.get(current_post["post_id"], ActionType.APPROVE)
             
             # 70% chance to be a 'smart' agent, 30% random
-            if random.random() < 0.7:
+            if rng.random() < 0.7:
                 action_type = correct_label
             else:
-                action_type = random.choice(list(ActionType))
+                action_type = rng.choice(list(ActionType))
                 
             action = SocialGuardAction(
                 post_id=current_post["post_id"],

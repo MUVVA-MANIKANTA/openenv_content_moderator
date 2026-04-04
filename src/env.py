@@ -40,8 +40,8 @@ class AISocialGuardEnv:
         post = self._state.all_posts[self._state.current_index]
         reward_score = self.compute_reward(post, action)
         
-        # Normalization: map raw reward [-0.5, 0.4] to [0.0, 1.0]
-        _RAW_MIN, _RAW_MAX = -0.5, 0.4
+        # Normalization: map raw reward [-0.8, 0.4] to [0.0, 1.0]
+        _RAW_MIN, _RAW_MAX = -0.8, 0.4
         normalized = (reward_score - _RAW_MIN) / (_RAW_MAX - _RAW_MIN)
         final_reward_value = round(max(0.0, min(1.0, normalized)), 4)
         
@@ -107,10 +107,11 @@ class AISocialGuardEnv:
                 
         # Serial offender escalating penalty (miss_count * 0.15)
         user_id = str(post.user_id)
-        if user_id in self._state.user_history:
-            miss_count = self._state.user_history[user_id].get("missed_violations", 0)
+        if action.action_type != correct_label and correct_label != ActionType.APPROVE:
+            user_stats = self._state.user_history.get(user_id, {"missed_violations": 0})
+            miss_count = user_stats.get("missed_violations", 0)
             if miss_count > 0:
-                base_reward -= (miss_count * 0.15)
+                base_reward -= min(miss_count * 0.15, 0.45)
 
         # 2. Reasoning Bonus +0.01 if reason provided
         if action.reason and len(action.reason) > 0:

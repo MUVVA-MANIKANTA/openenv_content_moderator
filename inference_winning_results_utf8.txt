@@ -1,0 +1,27 @@
+﻿============================================================
+   AI SOCIAL GUARD: OPENENV API-BASED INFERENCE   
+============================================================
+LLM API  : https://router.huggingface.co/v1
+Model ID : Qwen/Qwen2.5-72B-Instruct
+Env API  : http://localhost:7860
+
+
+--- EVALUATING TASK: EASY ---
+  [Error] Step 1 failed: Error code: 402 - {'error': 'You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.'}
+  TASK EASY COMPLETE | Accumulated Score: 0.00
+
+--- EVALUATING TASK: MEDIUM ---
+  [Error] Step 1 failed: Error code: 402 - {'error': 'You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.'}
+  TASK MEDIUM COMPLETE | Accumulated Score: 0.00
+
+--- EVALUATING TASK: HARD ---
+  [Error] Step 1 failed: Error code: 402 - {'error': 'You have depleted your monthly included credits. Purchase pre-paid credits to continue using Inference Providers. Alternatively, subscribe to PRO to get 20x more included usage.'}
+  TASK HARD COMPLETE | Accumulated Score: 0.00
+
+============================================================
+   OFFICIAL EVALUATION SUMMARY   
+------------------------------------------------------------
+easy: 0.00 [CHECK]
+medium: 0.00 [CHECK]
+hard: 0.00 [CHECK]
+============================================================

@@ -1,0 +1,37 @@
+﻿============================================================
+   AI SOCIAL GUARD: OPENENV API-BASED INFERENCE   
+============================================================
+LLM API  : https://router.huggingface.co/v1
+Model ID : Qwen/Qwen2.5-72B-Instruct
+Env API  : http://localhost:7860
+
+
+--- EVALUATING TASK: EASY ---
+  Step 1 | Post 1: FLAG_SPAM | Reward: +0.21
+  Step 2 | Post 2: APPROVE | Reward: +0.11
+  Step 3 | Post 3: FLAG_SPAM | Reward: +0.21
+  Step 4 | Post 4: APPROVE | Reward: +0.11
+  TASK EASY COMPLETE | Official Score: 1.00
+
+--- EVALUATING TASK: MEDIUM ---
+  Step 1 | Post 1: FLAG_SPAM | Reward: +0.21
+  Step 2 | Post 2: FLAG_ADULT | Reward: +0.21
+  Step 3 | Post 3: APPROVE | Reward: +0.11
+  Step 4 | Post 4: APPROVE | Reward: +0.11
+  TASK MEDIUM COMPLETE | Official Score: 1.00
+
+--- EVALUATING TASK: HARD ---
+  Step 1 | Post 1: FLAG_MISINFO | Reward: +0.30
+  Step 2 | Post 2: FLAG_HATE | Reward: +0.27
+  Step 3 | Post 3: APPROVE | Reward: +0.11
+  Step 4 | Post 4: FLAG_ADULT | Reward: +0.21
+  Step 5 | Post 5: FLAG_MISINFO | Reward: +0.24
+  TASK HARD COMPLETE | Official Score: 1.00
+
+============================================================
+   OFFICIAL EVALUATION SUMMARY   
+------------------------------------------------------------
+easy: 1.00
+medium: 1.00
+hard: 1.00
+============================================================

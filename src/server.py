@@ -1,16 +1,16 @@
 from fastapi import FastAPI, HTTPException, Body
 from typing import Dict, Any, Optional
 from pydantic import BaseModel
+from .env import AISocialGuardEnv
+from .models import SocialGuardAction, SocialGuardObservation, SocialGuardState, SocialGuardReward, ActionType
+from .tasks import EasySpamTask, MediumReputationTask, HardGlobalModerationTask, CrisisResponseTask
+from .ui import create_gradio_demo
+import gradio as gr
 
 class ResetRequest(BaseModel):
     seed: Optional[int] = 42
     task_id: Optional[str] = "easy_spam"
     task_config: Optional[Dict[str, Any]] = None
-from .env import AISocialGuardEnv
-from .models import SocialGuardAction, SocialGuardObservation, SocialGuardState, ActionType
-from .tasks import EasySpamTask, MediumReputationTask, HardGlobalModerationTask, CrisisResponseTask
-from .ui import create_gradio_demo
-import gradio as gr
 
 app = FastAPI(title="AI Social Guard OpenEnv")
 env = AISocialGuardEnv()

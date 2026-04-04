@@ -35,10 +35,11 @@ def moderate_post(text, reputation, reason):
         
     action = SocialGuardAction(post_id=1, action_type=decision, reason=reason)
     obs, reward, done, info = env.step(action)
+    reward_val = reward.value if hasattr(reward, 'value') else float(reward)
     
     result = {
         "Moderation Decision": decision.value.upper(),
-        "Reward Signal": f"{reward:+.2f}",
+        "Reward Signal": f"{reward_val:+.2f}",
         "Serial Offender Threat": f"{info.get('threat_level', 0)*100:.0f}%",
         "Reasoning Logged": reason if reason else "No reasoning provided.",
         "Observation State": obs.model_dump()
@@ -114,30 +115,31 @@ def create_gradio_demo():
             
             action = SocialGuardAction(post_id=post_data["post_id"], action_type=decision, reason=reason)
             obs, reward, done, info = env.step(action)
+            reward_val = reward.value if hasattr(reward, 'value') else float(reward)
             
-            new_total_reward = total_reward_sum + reward
+            new_total_reward = total_reward_sum + reward_val
             new_samples = samples_sum + 1
-            is_correct = 1 if reward >= 0 else 0
+            is_correct = 1 if reward_val >= 0.5 else 0
             new_correct_count = correct_sum + is_correct
             
             accuracy = (new_correct_count / new_samples) * 100
             
             # Simulated training log
             timestamp = f"[{rnd.randint(10, 23)}:{rnd.randint(10, 59)}:{rnd.randint(10, 59)}]"
-            log_entry = f"{timestamp} [TRAIN] Policy refined based on Reward: {reward:+.2f} for User_{uid}.\n"
-            if reward < 0:
+            log_entry = f"{timestamp} [TRAIN] Policy refined based on Reward: {reward_val:+.2f} for User_{uid}.\n"
+            if reward_val < 0:
                 log_entry += f"{timestamp} [WARN] Violation detected. Adjusted weights for UID_{uid}.\n"
             
             new_log = log_entry + current_log
             
-            status_color = "green" if reward >= 0 else "red"
-            status_text = "SAFE" if reward >= 0 else "THREAT DETECTED"
+            status_color = "green" if reward_val >= 0.5 else "red"
+            status_text = "SAFE" if reward_val >= 0.5 else "THREAT DETECTED"
             threat_html = f"<div style='padding:10px; border-radius:5px; background:{status_color}; color:white; text-align:center;'>System Status: <b>{status_text}</b> (Threat: {info.get('threat_level', 0)*100:.0f}%)</div>"
             confidence_html = f"<div style='padding:10px; border-radius:5px; background:#222; color:#0f0; text-align:center;'>Policy Confidence: <b>{accuracy:.1f}%</b></div>"
             
             result = {
                 "Moderation Decision": decision.value,
-                "Reward Signal": f"{reward:+.2f}",
+                "Reward Signal": f"{reward_val:+.2f}",
                 "Policy Metadata": {
                     "Session Reward": f"{new_total_reward:.2f}",
                     "Alignment Accuracy": f"{accuracy:.1f}%",
