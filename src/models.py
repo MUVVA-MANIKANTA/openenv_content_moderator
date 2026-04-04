@@ -65,4 +65,4 @@ class SocialGuardState(State):
     all_posts: List[Post]
     current_index: int = 0
     actions_taken: List[Dict[str, Any]] = []
-    user_history: Dict[int, Dict[str, int]] = {}
+    user_history: Dict[str, Dict[str, int]] = {}

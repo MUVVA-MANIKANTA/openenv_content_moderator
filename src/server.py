@@ -1,6 +1,11 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Body
 from typing import Dict, Any, Optional
 from pydantic import BaseModel
+
+class ResetRequest(BaseModel):
+    seed: Optional[int] = 42
+    task_id: Optional[str] = "easy_spam"
+    task_config: Optional[Dict[str, Any]] = None
 from .env import AISocialGuardEnv
 from .models import SocialGuardAction, SocialGuardObservation, SocialGuardState, ActionType
 from .tasks import EasySpamTask, MediumReputationTask, HardGlobalModerationTask, CrisisResponseTask
@@ -30,10 +35,11 @@ def read_root():
     return {"status": "healthy", "env": "AISocialGuard"}
 
 @app.post("/reset")
-def reset(seed: Optional[int] = None, task_id: Optional[str] = "easy_spam"):
-    task_cls = TASKS.get(task_id, EasySpamTask)
+def reset(body: Optional[ResetRequest] = Body(None)):
+    req = body or ResetRequest()
+    task_cls = TASKS.get(req.task_id, TASKS["easy_spam"])
     task = task_cls()
-    obs = env.reset(seed=seed, task_config=task.get_config())
+    obs = env.reset(seed=req.seed, task_config=task.get_config())
     # Convert to dict for response
     return {"observation": obs.model_dump(), "done": obs.done}
 
@@ -43,7 +49,7 @@ def step(action: SocialGuardAction):
     return {
         "observation": obs.model_dump(),
         "done": done,
-        "reward": reward,
+        "reward": reward.model_dump() if hasattr(reward, 'model_dump') else reward,
         "info": info
     }
 

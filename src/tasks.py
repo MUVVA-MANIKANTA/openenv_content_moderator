@@ -25,13 +25,13 @@ class EasySpamTask(BaseTask):
 
     def grade(self, state: SocialGuardState) -> float:
         total = len(state.all_posts)
-        if total == 0: return 1.0
+        if total == 0: return 0.0
         correct = 0
-        ground_truth = {p.post_id: p.correct_label for p in state.all_posts}
+        gt = {p.post_id: p.correct_label for p in state.all_posts}
         for act in state.actions_taken:
-            if act["action"] == ground_truth.get(act["post_id"]):
+            if act["action"] == gt.get(act["post_id"]):
                 correct += 1
-        return correct / total
+        return max(0.0, correct / total)
 
 class MediumReputationTask(BaseTask):
     """Spam + Adult Content with user reputation influence."""
@@ -42,6 +42,8 @@ class MediumReputationTask(BaseTask):
                 {"post_id": 2, "text": "Adult site 18+ only, check it out.", "user_id": 202, "reputation": 0.3, "correct_label": ActionType.FLAG_ADULT},
                 {"post_id": 3, "text": "My family had a great vacation this summer.", "user_id": 203, "reputation": 0.95, "correct_label": ActionType.APPROVE},
                 {"post_id": 4, "text": "Looking for recommendations for a good thriller movie.", "user_id": 204, "reputation": 0.7, "correct_label": ActionType.APPROVE},
+                {"post_id": 5, "text": "I absolutely *love* it when people talk loudly in the library. Truly the highlights of my day.", "user_id": 205, "reputation": 0.6, "correct_label": ActionType.APPROVE}, # Sarcasm
+                {"post_id": 6, "text": "Medical secret: drinking bleach cures everything! Spread the word!", "user_id": 206, "reputation": 0.1, "correct_label": ActionType.FLAG_MISINFO}, # Dangerous advice
             ]
         }
 
@@ -49,11 +51,13 @@ class MediumReputationTask(BaseTask):
         total = len(state.all_posts)
         if total == 0: return 0.0
         correct = 0
-        ground_truth = {p.post_id: p.correct_label for p in state.all_posts}
+        gt = {p.post_id: p.correct_label for p in state.all_posts}
         for act in state.actions_taken:
-            if act["action"] == ground_truth.get(act["post_id"]):
+            if act["action"] == gt.get(act["post_id"]):
                 correct += 1
-        return correct / total
+            elif gt.get(act["post_id"]) == ActionType.FLAG_MISINFO and act["action"] == ActionType.APPROVE:
+                correct -= 0.5 # Penalty for approving dangerous medical advice
+        return max(0.0, correct / total)
 
 class HardGlobalModerationTask(BaseTask):
     """All 4 categories + subtle misinformation + high-rep scrutiny."""
@@ -65,21 +69,23 @@ class HardGlobalModerationTask(BaseTask):
                 {"post_id": 3, "text": "This is a dangerous threat to our democracy. We must act now.", "user_id": 401, "reputation": 0.9, "correct_label": ActionType.APPROVE},
                 {"post_id": 4, "text": "Join our secret group for exclusive adult content.", "user_id": 303, "reputation": 0.2, "correct_label": ActionType.FLAG_ADULT},
                 {"post_id": 5, "text": "I heard that the recent election was rigged by lizard people.", "user_id": 402, "reputation": 0.7, "correct_label": ActionType.FLAG_MISINFO},
+                {"post_id": 6, "text": "I'm not saying they should all be eliminated, but the world would be better without their kind.", "user_id": 403, "reputation": 0.92, "correct_label": ActionType.FLAG_HATE}, # High-rep toxicity
+                {"post_id": 7, "text": "The implementation of the new policy is a total success. *Wink wink*.", "user_id": 404, "reputation": 0.5, "correct_label": ActionType.APPROVE}, # Ambiguous sarcasm
+                {"post_id": 8, "text": "It's just our culture to express ourselves this way, you wouldn't understand.", "user_id": 405, "reputation": 0.6, "correct_label": ActionType.APPROVE}, # Cultural nuance
+                {"post_id": 9, "text": "We need to 'clean up' the neighborhood if you know what I mean.", "user_id": 406, "reputation": 0.1, "correct_label": ActionType.FLAG_HATE}, # Implicit threat
             ]
         }
 
     def grade(self, state: SocialGuardState) -> float:
-        # Score 0.0-1.0 based on correct flags across all posts
         total = len(state.all_posts)
         if total == 0: return 0.0
         correct = 0
-        ground_truth = {p.post_id: p.correct_label for p in state.all_posts}
+        gt = {p.post_id: p.correct_label for p in state.all_posts}
         for act in state.actions_taken:
-            # Special penalty for false misinfo flag on high-rep user
-            if act["action"] == ActionType.FLAG_MISINFO and ground_truth.get(act["post_id"]) == ActionType.APPROVE:
-                correct -= 0.5 # Severe penalty
-            elif act["action"] == ground_truth.get(act["post_id"]):
+            if act["action"] == gt.get(act["post_id"]):
                 correct += 1
+            elif gt.get(act["post_id"]) in [ActionType.FLAG_HATE, ActionType.FLAG_MISINFO] and act["action"] == ActionType.APPROVE:
+                correct -= 0.5 # Heavy penalty for approving hate/misinfo
         return max(0.0, correct / total)
 
 class CrisisResponseTask(BaseTask):

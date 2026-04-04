@@ -92,8 +92,10 @@ def create_gradio_demo():
             if user_str and "999" in user_str: uid = 999
             elif user_str and "HighRep" in user_str: uid = 202
 
+            rnd = random.Random(samples_sum)
+
             post_data = {
-                "post_id": random.randint(1000, 9999),
+                "post_id": rnd.randint(1000, 9999),
                 "text": text,
                 "user_id": uid,
                 "reputation": 0.9 if uid == 202 else (0.1 if uid == 999 else reputation),
@@ -121,7 +123,7 @@ def create_gradio_demo():
             accuracy = (new_correct_count / new_samples) * 100
             
             # Simulated training log
-            timestamp = f"[{random.randint(10, 23)}:{random.randint(10, 59)}:{random.randint(10, 59)}]"
+            timestamp = f"[{rnd.randint(10, 23)}:{rnd.randint(10, 59)}:{rnd.randint(10, 59)}]"
             log_entry = f"{timestamp} [TRAIN] Policy refined based on Reward: {reward:+.2f} for User_{uid}.\n"
             if reward < 0:
                 log_entry += f"{timestamp} [WARN] Violation detected. Adjusted weights for UID_{uid}.\n"
