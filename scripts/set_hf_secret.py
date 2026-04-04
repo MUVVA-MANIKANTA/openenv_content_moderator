@@ -12,7 +12,8 @@ def set_secret():
         return
 
     api = HfApi(token=token)
-    repo_id = "reddymuvva3/ai-social-guard"
+    user = api.whoami()["name"]
+    repo_id = f"{user}/ai-social-guard"
     
     print(f"Setting HF_TOKEN secret for {repo_id}...")
     try:
