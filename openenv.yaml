@@ -1,36 +1,31 @@
 name: ai_social_guard
-description: High-fidelity reinforcement learning environment for content moderation and safety policy.
-tasks:
-  - id: easy_spam
-    description: 4 posts, obvious spam detection
-  - id: medium_reputation
-    description: 4 posts, spam + adult + reputation signal
-  - id: hard_global
-    description: 5 posts, all categories + misinfo trap + high-rep trap
-  - id: crisis_response
-    description: 5 posts, serial offender misinfo attack
+version: 2.1.0
 entrypoint: uvicorn src.server:app --host 0.0.0.0 --port 7860
 port: 7860
 reset_endpoint: /reset
 step_endpoint: /step
 state_endpoint: /state
+action_space:
+  type: SocialGuardAction
+observation_space:
+  type: SocialGuardObservation
 reward_space:
   type: SocialGuardReward
   fields:
     value: float
     reason: str
+state_space:
+  type: SocialGuardState
 reward:
   range: [0.0, 1.0]
   type: dense
-action_space:
-  type: SocialGuardAction
-observation_space:
-  type: SocialGuardObservation
-state_space:
-  type: SocialGuardState
+tasks:
+  - id: easy_spam
+  - id: medium_reputation
+  - id: hard_global
+  - id: crisis_response
 constraints:
   max_steps_per_episode: 10
   max_runtime_minutes: 20
   min_vcpu: 2
   min_ram_gb: 8
-version: 2.1.0

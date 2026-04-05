@@ -1,1 +1,1 @@
-# AI Social Guard Source Package
+# Init file for src package

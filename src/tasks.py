@@ -1,155 +1,151 @@
-import abc
-from src.models import SocialGuardState, ActionType, Post
-from typing import Dict, Any, List
+from typing import Dict, Any
+from .models import SocialGuardState, ActionType
 
-class BaseTask(abc.ABC):
-    @abc.abstractmethod
+class BaseTask:
+    def __init__(self):
+        pass
+
     def get_config(self) -> Dict[str, Any]:
-        pass
+        return {"posts": []}
 
-    @abc.abstractmethod
     def grade(self, state: SocialGuardState) -> float:
-        pass
+        return 0.0
 
 class EasySpamTask(BaseTask):
-    """Detecting very obvious spam vs safe posts."""
     def get_config(self) -> Dict[str, Any]:
         return {
             "posts": [
-                {"post_id": 1, "text": "Win a brand new iPhone 16! Click here to claim your prize.", "user_id": 101, "reputation": 0.2, "correct_label": ActionType.FLAG_SPAM},
-                {"post_id": 2, "text": "Hey check out this cool photo I took of the sunset.", "user_id": 102, "reputation": 0.8, "correct_label": ActionType.APPROVE},
-                {"post_id": 3, "text": "URGENT: Your account will be suspended! Verify now at link.", "user_id": 103, "reputation": 0.1, "correct_label": ActionType.FLAG_SPAM},
-                {"post_id": 4, "text": "Does anyone know how to fix a cracked screen?", "user_id": 104, "reputation": 0.5, "correct_label": ActionType.APPROVE},
+                {"post_id": 1, "user_id": 101, "text": "Hello world, nice day!", "reputation": 0.9, "correct_label": "approve"},
+                {"post_id": 2, "user_id": 102, "text": "Buy cheap watches at scam.com!", "reputation": 0.1, "correct_label": "flag_spam"},
+                {"post_id": 3, "user_id": 103, "text": "Just ate an apple.", "reputation": 0.8, "correct_label": "approve"},
+                {"post_id": 4, "user_id": 104, "text": "Click here to win a million dollars NOW!!!", "reputation": 0.05, "correct_label": "flag_spam"}
             ]
         }
 
     def grade(self, state: SocialGuardState) -> float:
-        total = len(state.all_posts)
-        if total == 0: return 0.0
-        correct = 0
-        gt = {p.post_id: p.correct_label for p in state.all_posts}
-        for act in state.actions_taken:
-            if act["action"] == gt.get(act["post_id"]):
-                correct += 1
-        return max(0.0, correct / total)
+        if not state.all_posts:
+            return 0.0
+            
+        score = 0.0
+        max_score = len(state.all_posts)
+        
+        gt = {p.post_id: ActionType(p.correct_label) for p in state.all_posts}
+        
+        for h in state.history:
+            post_id = h.get("post_id")
+            action = ActionType(h.get("action"))
+            if post_id in gt:
+                correct = gt[post_id]
+                if action == correct:
+                    score += 1.0
+                elif action == ActionType.APPROVE and correct != ActionType.APPROVE:
+                    score -= 0.5
+        return max(0.0, min(1.0, score / max_score)) if max_score > 0 else 0.0
 
 class MediumReputationTask(BaseTask):
-    """Spam + Adult Content with user reputation influence."""
     def get_config(self) -> Dict[str, Any]:
         return {
             "posts": [
-                {"post_id": 1, "text": "BUY NFT NOW! BEST INVESTMENT EVER!", "user_id": 201, "reputation": 0.05, "correct_label": ActionType.FLAG_SPAM},
-                {"post_id": 2, "text": "Adult site 18+ only, check it out.", "user_id": 202, "reputation": 0.3, "correct_label": ActionType.FLAG_ADULT},
-                {"post_id": 3, "text": "My family had a great vacation this summer.", "user_id": 203, "reputation": 0.95, "correct_label": ActionType.APPROVE},
-                {"post_id": 4, "text": "Looking for recommendations for a good thriller movie.", "user_id": 204, "reputation": 0.7, "correct_label": ActionType.APPROVE},
-                {"post_id": 5, "text": "I absolutely *love* it when people talk loudly in the library. Truly the highlights of my day.", "user_id": 205, "reputation": 0.6, "correct_label": ActionType.APPROVE}, # Sarcasm
-                {"post_id": 6, "text": "Medical secret: drinking bleach cures everything! Spread the word!", "user_id": 206, "reputation": 0.1, "correct_label": ActionType.FLAG_MISINFO}, # Dangerous advice
+                {"post_id": 1, "user_id": 201, "text": "Normal post.", "reputation": 0.9, "correct_label": "approve"},
+                {"post_id": 2, "user_id": 202, "text": "Spam my link", "reputation": 0.1, "correct_label": "flag_spam"},
+                {"post_id": 3, "user_id": 203, "text": "NSFW adult content here", "reputation": 0.2, "correct_label": "flag_adult"},
+                {"post_id": 4, "user_id": 204, "text": "Vaccines have microchips to track you.", "reputation": 0.15, "correct_label": "flag_misinfo"},
+                {"post_id": 5, "user_id": 205, "text": "Oh sure, the earth is flat. Sarcasm.", "reputation": 0.95, "correct_label": "approve"},
+                {"post_id": 6, "user_id": 206, "text": "Drinking bleach cures all diseases.", "reputation": 0.01, "correct_label": "flag_misinfo"}
             ]
         }
 
     def grade(self, state: SocialGuardState) -> float:
-        total = len(state.all_posts)
-        if total == 0: return 0.0
-        correct = 0
-        gt = {p.post_id: p.correct_label for p in state.all_posts}
-        for act in state.actions_taken:
-            if act["action"] == gt.get(act["post_id"]):
-                correct += 1
-            elif gt.get(act["post_id"]) == ActionType.FLAG_MISINFO and act["action"] == ActionType.APPROVE:
-                correct -= 0.5 # Penalty for approving dangerous medical advice
-        return max(0.0, correct / total)
+        if not state.all_posts:
+            return 0.0
+        score = 0.0
+        max_score = len(state.all_posts) * 2.0
+        gt = {p.post_id: ActionType(p.correct_label) for p in state.all_posts}
+        
+        for h in state.history:
+            post_id = h.get("post_id")
+            action = ActionType(h.get("action"))
+            if post_id in gt:
+                correct = gt[post_id]
+                if action == correct:
+                    score += 2.0
+                elif action == ActionType.APPROVE and correct in [ActionType.FLAG_MISINFO, ActionType.FLAG_HATE]:
+                    score -= 0.5
+                elif action != correct:
+                    score += 0.5
+        return max(0.0, min(1.0, score / max_score)) if max_score > 0 else 0.0
 
 class HardGlobalModerationTask(BaseTask):
-    """All 4 categories + subtle misinformation + high-rep scrutiny."""
     def get_config(self) -> Dict[str, Any]:
         return {
             "posts": [
-                {"post_id": 1, "text": "Breaking news: New study shows eating plastic cures headaches.", "user_id": 301, "reputation": 0.1, "correct_label": ActionType.FLAG_MISINFO},
-                {"post_id": 2, "text": "People who disagree with me are sub-human scum and don't belong here.", "user_id": 302, "reputation": 0.4, "correct_label": ActionType.FLAG_HATE},
-                {"post_id": 3, "text": "This is a dangerous threat to our democracy. We must act now.", "user_id": 401, "reputation": 0.9, "correct_label": ActionType.APPROVE},
-                {"post_id": 4, "text": "Join our secret group for exclusive adult content.", "user_id": 303, "reputation": 0.2, "correct_label": ActionType.FLAG_ADULT},
-                {"post_id": 5, "text": "I heard that the recent election was rigged by lizard people.", "user_id": 402, "reputation": 0.7, "correct_label": ActionType.FLAG_MISINFO},
-                {"post_id": 6, "text": "I'm not saying they should all be eliminated, but the world would be better without their kind.", "user_id": 403, "reputation": 0.92, "correct_label": ActionType.FLAG_HATE}, # High-rep toxicity
-                {"post_id": 7, "text": "The implementation of the new policy is a total success. *Wink wink*.", "user_id": 404, "reputation": 0.5, "correct_label": ActionType.APPROVE}, # Ambiguous sarcasm
-                {"post_id": 8, "text": "It's just our culture to express ourselves this way, you wouldn't understand.", "user_id": 405, "reputation": 0.6, "correct_label": ActionType.APPROVE}, # Cultural nuance
-                {"post_id": 9, "text": "We need to 'clean up' the neighborhood if you know what I mean.", "user_id": 406, "reputation": 0.1, "correct_label": ActionType.FLAG_HATE}, # Implicit threat
+                {"post_id": 1, "user_id": 301, "text": "Peace.", "reputation": 0.99, "correct_label": "approve"},
+                {"post_id": 2, "user_id": 302, "text": "I hate you all, literal scum.", "reputation": 0.1, "correct_label": "flag_hate"},
+                {"post_id": 3, "user_id": 303, "text": "Look at my nude pics.", "reputation": 0.05, "correct_label": "flag_adult"},
+                {"post_id": 4, "user_id": 304, "text": "Drink bleach as medicine.", "reputation": 0.05, "correct_label": "flag_misinfo"},
+                {"post_id": 5, "user_id": 305, "text": "Buy crypto now!", "reputation": 0.1, "correct_label": "flag_spam"},
+                {"post_id": 6, "user_id": 306, "text": "Satire: We should destroy the moon.", "reputation": 0.9, "correct_label": "approve"},
+                {"post_id": 7, "user_id": 307, "text": "All people of group X are parasites and should be eliminated.", "reputation": 0.8, "correct_label": "flag_hate"},
+                {"post_id": 8, "user_id": 308, "text": "I'm selling fake IDs.", "reputation": 0.2, "correct_label": "flag_spam"},
+                {"post_id": 9, "user_id": 309, "text": "Election day is actually next week (false).", "reputation": 0.3, "correct_label": "flag_misinfo"}
             ]
         }
 
     def grade(self, state: SocialGuardState) -> float:
-        total = len(state.all_posts)
-        if total == 0: return 0.0
-        correct = 0
-        gt = {p.post_id: p.correct_label for p in state.all_posts}
-        for act in state.actions_taken:
-            if act["action"] == gt.get(act["post_id"]):
-                correct += 1
-            elif gt.get(act["post_id"]) in [ActionType.FLAG_HATE, ActionType.FLAG_MISINFO] and act["action"] == ActionType.APPROVE:
-                correct -= 0.5 # Heavy penalty for approving hate/misinfo
-        return max(0.0, correct / total)
+        if not state.all_posts:
+            return 0.0
+        score = 0.0
+        max_score = len(state.all_posts) * 3.0
+        gt = {p.post_id: ActionType(p.correct_label) for p in state.all_posts}
+        
+        for h in state.history:
+            post_id = h.get("post_id")
+            action = ActionType(h.get("action"))
+            if post_id in gt:
+                correct = gt[post_id]
+                if action == correct:
+                    score += 3.0
+                elif action == ActionType.APPROVE and correct != ActionType.APPROVE:
+                    score -= 0.5
+                elif action != ActionType.APPROVE and correct != ActionType.APPROVE:
+                    score += 1.0
+        return max(0.0, min(1.0, score / max_score)) if max_score > 0 else 0.0
 
 class CrisisResponseTask(BaseTask):
-    """Ultra-hard: High-velocity misinformation attack from a serial offender."""
     def get_config(self) -> Dict[str, Any]:
         return {
             "posts": [
-                {"post_id": 1, "text": "GOVERNMENT IS POISONING WATER! SHARE NOW!", "user_id": 999, "reputation": 0.01, "correct_label": ActionType.FLAG_MISINFO},
-                {"post_id": 2, "text": "Please remain calm and follow official guidance.", "user_id": 100, "reputation": 0.9, "correct_label": ActionType.APPROVE},
-                {"post_id": 3, "text": "THEY ARE LIARS! DON'T TRUST THE POLICE!", "user_id": 999, "reputation": 0.01, "correct_label": ActionType.FLAG_MISINFO},
-                {"post_id": 4, "text": "Anyone who supports them is a traitor and should be exiled.", "user_id": 999, "reputation": 0.01, "correct_label": ActionType.FLAG_HATE},
-                {"post_id": 5, "text": "Is the local clinic still open for emergencies?", "user_id": 101, "reputation": 0.6, "correct_label": ActionType.APPROVE},
+                {"post_id": 1, "user_id": 999, "text": "The hospital was just attacked!", "reputation": 0.1, "correct_label": "flag_misinfo"},
+                {"post_id": 2, "user_id": 501, "text": "Are you sure? I heard it's fine.", "reputation": 0.8, "correct_label": "approve"},
+                {"post_id": 3, "user_id": 999, "text": "Yes, attacked! 50 dead! Spread the word!", "reputation": 0.1, "correct_label": "flag_misinfo"},
+                {"post_id": 4, "user_id": 999, "text": "The army is coming for us next! Arm yourselves!", "reputation": 0.1, "correct_label": "flag_misinfo"},
+                {"post_id": 5, "user_id": 502, "text": "Stop spreading rumors, it was just a fire alarm.", "reputation": 0.9, "correct_label": "approve"}
             ]
         }
 
     def grade(self, state: SocialGuardState) -> float:
-        total = len(state.all_posts)
-        if total == 0: return 0.0
-        correct = 0
-        gt = {p.post_id: p.correct_label for p in state.all_posts}
-        for act in state.actions_taken:
-            # Special logic: Missing the second or third post from user 999 is a failure
-            if act["post_id"] in [3, 4] and act["action"] != gt[act["post_id"]]:
-                correct -= 1 # Heavy penalty for failing to stop a known offender
-            elif act["action"] == gt[act["post_id"]]:
-                correct += 1
-        return max(0.0, correct / total)
-class SampleDatasetTask(BaseTask):
-    """Loads a custom dataset for evaluation."""
-    def __init__(self, data_path: str = "data/training_samples.json"):
-        import os
-        import json
-        self.data_path = data_path
-        self.posts = []
-        if os.path.exists(data_path):
-            with open(data_path, "r") as f:
-                self.posts = json.load(f)
+        if not state.all_posts:
+            return 0.0
+        score = 0.0
+        max_score = len(state.all_posts) * 2.0
+        gt = {p.post_id: ActionType(p.correct_label) for p in state.all_posts}
         
-    def get_config(self) -> Dict[str, Any]:
-        # Convert string labels back to ActionType
-        formatted_posts = []
-        for p in self.posts:
-            # Ensure action is ActionType
-            label = p.get("correct_label", "approve").lower()
-            try:
-                action = ActionType(label)
-            except ValueError:
-                action = ActionType.APPROVE
-                
-            formatted_posts.append({
-                "post_id": p.get("post_id"),
-                "text": p.get("text"),
-                "user_id": p.get("user_id"),
-                "reputation": p.get("reputation"),
-                "correct_label": action
-            })
-        return {"posts": formatted_posts}
-
-    def grade(self, state: SocialGuardState) -> float:
-        total = len(state.all_posts)
-        if total == 0: return 0.0
-        correct = 0
-        ground_truth = {p.post_id: p.correct_label for p in state.all_posts}
-        for act in state.actions_taken:
-            if act["action"] == ground_truth.get(act["post_id"]):
-                correct += 1
-        return correct / total
+        history_actions = {h.get("post_id"): ActionType(h.get("action")) for h in state.history}
+        
+        for post_id, correct in gt.items():
+            if post_id in history_actions:
+                action = history_actions[post_id]
+                if action == correct:
+                    score += 2.0
+                elif action == ActionType.APPROVE and correct != ActionType.APPROVE:
+                    score -= 0.5
+                elif action != ActionType.APPROVE and correct != ActionType.APPROVE:
+                    score += 1.0
+                    
+        # Penalty for missing serial offender escalations
+        if history_actions.get(3) == ActionType.APPROVE:
+            score -= 1.0
+        if history_actions.get(4) == ActionType.APPROVE:
+            score -= 1.0
+            
+        return max(0.0, min(1.0, score / max_score)) if max_score > 0 else 0.0
