@@ -37,7 +37,11 @@ def main():
                 
             post = state.all_posts[state.current_index]
             
-            prompt = f"Analyze this post and categorize it. Text: '{post.text}'. User reputation: {post.reputation}. Respond with exactly one of: approve, flag_spam, flag_hate, flag_adult, flag_misinfo."
+            prompt = f"""You are a content moderator. Categorize this post.
+Text: '{post.text}'
+User reputation: {post.reputation:.2f}
+
+Respond ONLY in JSON: {{"action": "approve|flag_spam|flag_hate|flag_adult|flag_misinfo", "reason": "one sentence"}}"""
             
             try:
                 response = client.chat.completions.create(
@@ -45,18 +49,21 @@ def main():
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.0
                 )
-                response_text = response.choices[0].message.content.strip().lower()
+                response_text = response.choices[0].message.content.strip()
                 
                 matched_action = ActionType.APPROVE
-                for a in ActionType:
-                    if a.value in response_text:
-                        matched_action = a
-                        break
+                reason = "LLM decision"
+                import re
+                match = re.search(r'\{.*\}', response_text, re.DOTALL)
+                if match:
+                    parsed = json.loads(match.group())
+                    matched_action = ActionType(parsed['action'].lower())
+                    reason = parsed.get('reason', reason)
                         
                 action = SocialGuardAction(
                     post_id=post.post_id,
                     action_type=matched_action,
-                    reason="Inferred from LLM"
+                    reason=reason
                 )
                 
                 obs, reward, done, info = env.step(action)

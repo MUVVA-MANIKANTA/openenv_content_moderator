@@ -154,3 +154,4 @@ baseline_results.txt
 baseline_run.txt
 results.txt
 *.log
+.vite/
