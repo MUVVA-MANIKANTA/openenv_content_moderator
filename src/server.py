@@ -26,6 +26,10 @@ app = FastAPI(title="AI Social Guard")
 env = AISocialGuardEnv()
 current_task = None
 
+@app.get("/")
+def read_root():
+    return {"status": "healthy", "env": "AISocialGuard", "version": "2.1.0"}
+
 @app.post("/reset")
 def reset(body: Optional[ResetRequest] = Body(None)):
     global current_task

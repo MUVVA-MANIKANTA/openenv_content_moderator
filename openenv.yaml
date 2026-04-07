@@ -21,13 +21,17 @@ reward:
   type: dense
 tasks:
   - id: easy_spam
-    description: "4 posts, obvious spam detection"
+    difficulty: easy
+    description: "4 posts — obvious spam vs safe content detection"
   - id: medium_reputation
-    description: "6 posts, spam + adult + dangerous misinfo"
+    difficulty: medium
+    description: "6 posts — spam, adult, sarcasm, dangerous misinfo with reputation signals"
   - id: hard_global
-    description: "9 posts, complex cases with high-reputation toxicity"
+    difficulty: hard
+    description: "9 posts — all categories, high-rep toxicity, ambiguous language traps"
   - id: crisis_response
-    description: "5 posts, serial offender misinfo attack response"
+    difficulty: ultra
+    description: "5 posts — high-velocity misinfo attack from a serial offender (user 999)"
 constraints:
   max_steps_per_episode: 10
   max_runtime_minutes: 20
