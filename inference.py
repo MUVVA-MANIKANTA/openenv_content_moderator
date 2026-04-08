@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import re
 from openai import OpenAI
 from src.env import AISocialGuardEnv
 from src.models import SocialGuardAction, ActionType
@@ -15,8 +16,7 @@ client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN or "no-token")
 
 def main():
     if not HF_TOKEN:
-        print("Error: HF_TOKEN is not set")
-        sys.exit(1)
+        print("Warning: HF_TOKEN is not set. Continuing mission...")
         
     env = AISocialGuardEnv()
     
@@ -86,7 +86,6 @@ Drop your reading as a single JSON object — nothing else, no markdown fences:
                 
                 matched_action = ActionType.APPROVE
                 reason = "LLM decision"
-                import re
                 match = re.search(r'\{.*\}', response_text, re.DOTALL)
                 if match:
                     parsed = json.loads(match.group())
