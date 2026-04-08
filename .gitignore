@@ -155,3 +155,18 @@ baseline_run.txt
 results.txt
 *.log
 .vite/
+
+# Git and Environment Metadata
+remotes*.txt
+temp_hf.txt
+.env
+
+# Deployment and CI Artifacts
+hf_output.txt
+hf_deploy_status*
+dumped_code.txt
+
+# Inference and Benchmark Outputs
+inference_results*
+inference_winning*
+inference_final_results.txt

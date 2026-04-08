@@ -11,6 +11,9 @@ tags: ["openenv", "reinforcement-learning", "trust-and-safety"]
 
 # 🛡️ AI Social Guard v2 (RL + Threat Tracking)
 
+[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-yellow)](https://huggingface.co/spaces/manikantareddymuvva3/ai-social-guard) ![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg) ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+
+
 *   **Multi-Category Moderation**: Automated classification into **HATE, MISINFO, VANDALISM, ADULT, SPAM, and OFFENSIVE** categories.
 *   **Serial Offender Tracking**: Proactive risk signaling for repeat violators (e.g., User 999).
 *   **Dynamic Reputation Engine**: Context-aware rewards that vary based on the author's history.

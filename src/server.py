@@ -57,4 +57,4 @@ def state():
     return env.state().model_dump()
 
 demo = create_gradio_demo()
-app = gr.mount_gradio_app(app, demo, path="/ui")
+app = gr.mount_gradio_app(app, demo, path="/")
