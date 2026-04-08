@@ -27,8 +27,8 @@ env = AISocialGuardEnv()
 current_task = None
 
 @app.get("/")
-def read_root():
-    return {"status": "healthy", "env": "AISocialGuard", "version": "2.1.0"}
+def root():
+    return {"status": "ok", "service": "AI Social Guard v2"}
 
 @app.post("/reset")
 def reset(body: Optional[ResetRequest] = Body(None)):
