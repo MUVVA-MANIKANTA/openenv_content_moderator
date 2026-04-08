@@ -25,8 +25,12 @@ dependencies = [
     "requests>=2.31.0",
     "gradio>=4.0.0",
     "python-multipart>=0.0.6",
+    "openenv-core>=0.2.0",
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/MUVVA-MANIKANTA/openenv_content_moderator"
 "Bug Tracker" = "https://github.com/MUVVA-MANIKANTA/openenv_content_moderator/issues"
+
+[project.scripts]
+server = "server.app:main"
