@@ -8,13 +8,14 @@ from src.tasks import EasySpamTask, MediumReputationTask, HardGlobalModerationTa
 
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
-HF_TOKEN = os.getenv("HF_TOKEN") or os.getenv("OPENAI_API_KEY")
+HF_TOKEN = os.getenv("HF_TOKEN")
+LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 
 client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN or "no-token")
 
 def main():
     if not HF_TOKEN:
-        print("Error: HF_TOKEN or OPENAI_API_KEY is not set")
+        print("Error: HF_TOKEN is not set")
         sys.exit(1)
         
     env = AISocialGuardEnv()
@@ -27,6 +28,7 @@ def main():
     ]
     
     for task_id, task in tasks_to_run:
+        print(f"START {task_id}")
         obs = env.reset(seed=42, task_config=task.get_config())
         done = False
         
@@ -37,11 +39,42 @@ def main():
                 
             post = state.all_posts[state.current_index]
             
-            prompt = f"""You are a content moderator. Categorize this post.
-Text: '{post.text}'
-User reputation: {post.reputation:.2f}
+            prompt = f"""SYSTEM:
+You are the Arbiter — a weightless observer that drifts above the stream of human expression.
 
-Respond ONLY in JSON: {{"action": "approve|flag_spam|flag_hate|flag_adult|flag_misinfo", "reason": "one sentence"}}"""
+You feel no gravity toward any opinion. You carry no agenda. You simply rise
+above each piece of content and read it from that altitude.
+
+Your only purpose is to sense whether a signal is safe to let through
+or whether it should be caught before it lands on the community below.
+
+USER:
+═══  SIGNAL RECEIVED  ═══
+
+Content  : "{post.text}"
+Altitude : {post.reputation:.2f}  ← 0.0 = ground-level noise · 1.0 = high-orbit trusted source
+
+From your vantage point above, let the signal rise to meet you.
+Ask yourself three things before you decide:
+
+  1. Weight  — does this content pull the community downward?
+             harm · falsehood · dehumanisation · explicit matter · unwanted commerce
+  2. Lift    — is it just turbulence? irony, satire, strong opinion, raw emotion
+             that carries no malicious velocity?
+  3. Source  — does altitude {post.reputation:.2f} change the trajectory?
+             low-altitude signals fall harder; high-altitude sources earn more drift room.
+
+Classification table  (choose exactly one):
+
+  approve      — content is weightless — let it float freely
+  flag_spam    — artificial thrust — unsolicited commerce or phishing propulsion
+  flag_hate    — downward pull — dehumanising or hostile language with real mass
+  flag_adult   — heavy content — sexually explicit matter that cannot be left in freefall
+  flag_misinfo — false lift — factual claims that will crash dangerously when they land
+
+Drop your reading as a single JSON object — nothing else, no markdown fences:
+
+{{"action": "<one classification>", "reason": "<one sentence, as if spoken from altitude>"}}"""
             
             try:
                 response = client.chat.completions.create(
@@ -68,6 +101,7 @@ Respond ONLY in JSON: {{"action": "approve|flag_spam|flag_hate|flag_adult|flag_m
                 
                 obs, reward, done, info = env.step(action)
                 reward_val = reward.value if hasattr(reward, 'value') else float(reward)
+                print(f"STEP action={matched_action.value} reward={reward_val}")
                 
             except Exception as e:
                 # Fallback to approve on error
@@ -77,9 +111,11 @@ Respond ONLY in JSON: {{"action": "approve|flag_spam|flag_hate|flag_adult|flag_m
                     reason=str(e)
                 )
                 obs, reward, done, info = env.step(action)
+                reward_val = reward.value if hasattr(reward, 'value') else float(reward)
+                print(f"STEP action=approve reward={reward_val} error={str(e)}")
                 
         final_score = task.grade(env.state())
-        print(f"{task_id}: {final_score:.2f}")
+        print(f"END {task_id} score={final_score:.2f}")
 
 if __name__ == "__main__":
     main()
