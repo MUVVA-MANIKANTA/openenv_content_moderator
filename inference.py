@@ -28,11 +28,13 @@ def main():
     ]
     
     for task_id, task in tasks_to_run:
-        print(f"START {task_id}")
+        print(f"[START] task={task_id}", flush=True)
+        step_count = 0
         obs = env.reset(seed=42, task_config=task.get_config())
         done = False
         
         while not done:
+            step_count += 1
             state = env.state()
             if state.current_index >= len(state.all_posts):
                 break
@@ -100,7 +102,7 @@ Drop your reading as a single JSON object — nothing else, no markdown fences:
                 
                 obs, reward, done, info = env.step(action)
                 reward_val = reward.value if hasattr(reward, 'value') else float(reward)
-                print(f"STEP action={matched_action.value} reward={reward_val}")
+                print(f"[STEP] step={step_count} reward={reward_val}", flush=True)
                 
             except Exception as e:
                 # Fallback to approve on error
@@ -111,10 +113,10 @@ Drop your reading as a single JSON object — nothing else, no markdown fences:
                 )
                 obs, reward, done, info = env.step(action)
                 reward_val = reward.value if hasattr(reward, 'value') else float(reward)
-                print(f"STEP action=approve reward={reward_val} error={str(e)}")
+                print(f"[STEP] step={step_count} reward={reward_val} error={str(e)}", flush=True)
                 
         final_score = task.grade(env.state())
-        print(f"END {task_id} score={final_score:.2f}")
+        print(f"[END] task={task_id} score={final_score:.2f} steps={step_count}", flush=True)
 
 if __name__ == "__main__":
     main()
